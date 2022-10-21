@@ -9,6 +9,7 @@ class Template:
     def __init__(self, *, integresql, tpl_hash):
         self.integresql = integresql
         self.tpl_hash = tpl_hash
+        self.dbinfo = None
 
     def __repr__(self):
         return f"<Template: tpl_hash={self.tpl_hash!r}>"
@@ -30,17 +31,23 @@ class Template:
         else:
             raise errors.IntegreSQLError(f"Received unexpected HTTP status {rsp.status_code}")
 
-    def close(self) -> NoReturn:
-        self._tpl_hash = None
-        if self._connection:
-            self._connection.close()
-            self._connection = None
+    def finalize(self) -> NoReturn:
+        rsp = self.integresql.request("PUT", f"/templates/{self.tpl_hash}")
+        if rsp.status_code == http.client.NO_CONTENT:
+            return
+        elif rsp.status_code == http.client.NOT_FOUND:
+            raise errors.TemplateNotFound()
+        elif rsp.status_code == http.client.SERVICE_UNAVAILABLE:
+            raise errors.ManagerNotReady()
+        else:
+            raise errors.IntegreSQLError(f"Received unexpected HTTP status {rsp.status_code}")
 
-    def __enter__(self) -> "Template":
-        return self.get_template()
+    def __enter__(self) -> DBInfo:
+        return self.dbinfo
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> NoReturn:  # noqa
-        self.close()
+    def __exit__(self, exc_type, exc_val, exc_tb):  # noqa
+        self.finalize()
+        # print(f"[DDD] TODO: implement self.finalize() and call it from here")
 
 
 class TemplateCtx:
