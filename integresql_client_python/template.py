@@ -1,6 +1,6 @@
 import http.client
 import pathlib
-from typing import Optional, NoReturn, Union, List
+from typing import NoReturn, Union, List
 
 from . import errors
 from .database import Database
@@ -9,7 +9,7 @@ from .template_hash import TemplateDirHash
 
 
 class Template:
-    def __init__(self, *, integresql, tpl_hash):
+    def __init__(self, *, integresql: "IntegreSQL", tpl_hash: Union[TemplateDirHash, str]):
         self.integresql = integresql
         self.tpl_hash = tpl_hash
         self.dbinfo = None
@@ -65,7 +65,10 @@ class TemplateCtx:
 
     @classmethod
     def from_template_dirs(
-        cls, *, integresql, tpl_dirs: Union[TemplateDirHash, pathlib.PurePath, str, List[str], List[pathlib.PurePath]]
+        cls,
+        *,
+        integresql: "IntegreSQL",
+        tpl_dirs: Union[TemplateDirHash, pathlib.PurePath, str, List[str], List[pathlib.PurePath]],
     ):
         assert isinstance(tpl_dirs, (list, tuple))
         tpl_hash = TemplateDirHash(tpl_dirs)
