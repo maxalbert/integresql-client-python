@@ -62,7 +62,7 @@ class TemplateCtx:
         self.tpl_hash = tpl_hash
 
     @classmethod
-    def from_template_dirs(cls, tpl_dirs):
+    def from_template_dirs(cls, *, integresql, tpl_dirs):
         assert isinstance(tpl_dirs, (list, tuple))
         raise NotImplementedError("TODO: calculate tpl_hash from contents of tpl_dirs")
 
