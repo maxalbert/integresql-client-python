@@ -1,8 +1,9 @@
 import http.client
+from typing import Optional, NoReturn, Union, List
 
 from . import errors
+from .database import Database
 from .dbinfo import DBInfo
-from typing import Optional, NoReturn, Union, List
 
 
 class Template:
@@ -42,12 +43,17 @@ class Template:
         else:
             raise errors.IntegreSQLError(f"Received unexpected HTTP status {rsp.status_code}")
 
+    def discard(self) -> NoReturn:
+        return self.integresql.discard_template(self.tpl_hash)
+
+    def get_database(self) -> Database:
+        return Database(self.integresql, self.tpl_hash)
+
     def __enter__(self) -> DBInfo:
         return self.dbinfo
 
     def __exit__(self, exc_type, exc_val, exc_tb):  # noqa
         self.finalize()
-        # print(f"[DDD] TODO: implement self.finalize() and call it from here")
 
 
 class TemplateCtx:
