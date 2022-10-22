@@ -5,7 +5,7 @@ from typing import Optional, NoReturn, Union, List
 from . import errors
 from .database import Database
 from .dbinfo import DBInfo
-from .template_hash import TemplateHash
+from .template_hash import TemplateDirHash
 
 
 class Template:
@@ -65,10 +65,10 @@ class TemplateCtx:
 
     @classmethod
     def from_template_dirs(
-        cls, *, integresql, tpl_dirs: Union[TemplateHash, pathlib.PurePath, str, List[str], List[pathlib.PurePath]]
+        cls, *, integresql, tpl_dirs: Union[TemplateDirHash, pathlib.PurePath, str, List[str], List[pathlib.PurePath]]
     ):
         assert isinstance(tpl_dirs, (list, tuple))
-        tpl_hash = TemplateHash(tpl_dirs)
+        tpl_hash = TemplateDirHash(tpl_dirs)
         return TemplateCtx(integresql=integresql, tpl_hash=tpl_hash)
 
     def __enter__(self):

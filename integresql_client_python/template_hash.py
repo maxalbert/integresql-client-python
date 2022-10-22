@@ -3,7 +3,7 @@ import pathlib
 from typing import Union, List
 
 
-class TemplateHash:
+class TemplateDirHash:
     BUFFER_SIZE = 4 * 1024
 
     def __init__(self, template: Union[str, List[str], pathlib.PurePath, List[pathlib.PurePath], None]) -> None:
