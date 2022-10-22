@@ -29,15 +29,22 @@ class IntegreSQL:
         self.debug = False
         self._connection = None
 
-    def template(self, *tpl_dirs, tpl_hash=None):
-        if len(tpl_dirs) == 0 and tpl_hash is None:
-            raise ValueError("Must provide one or more template directories, or alternatively a value for `tpl_hash`.")
-        elif len(tpl_dirs) >= 1 and tpl_hash is not None:
-            raise ValueError("Template directories cannot be combined with argument `tpl_hash`")
-        elif tpl_hash is not None:
-            return TemplateCtx(integresql=self, tpl_hash=tpl_hash)
-        else:
+    def template(self, tpl_dir=None, tpl_hash=None):
+        if tpl_dir is not None:
+            if tpl_hash is not None:
+                raise ValueError("Argument `tpl_dir` cannot be combined with argument `tpl_hash`")
+
+            if not isinstance(tpl_dir, (list, tuple)):
+                tpl_dirs = [tpl_dir]
+            else:
+                tpl_dirs = tpl_dir
             return TemplateCtx.from_template_dirs(integresql=self, tpl_dirs=tpl_dirs)
+
+        else:
+            if tpl_hash is None:
+                raise ValueError("One of the arguments `tpl_dir`, `tpl_hash` must be provided.")
+
+            return TemplateCtx(integresql=self, tpl_hash=tpl_hash)
 
     @property
     def connection(self) -> requests.Session:
