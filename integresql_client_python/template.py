@@ -13,6 +13,7 @@ class Template:
         self.integresql = integresql
         self.tpl_hash = tpl_hash
         self.dbinfo = None
+        self.db_uri = None
 
     def __repr__(self):
         return f"<Template: tpl_hash={self.tpl_hash!r}>"
@@ -25,6 +26,7 @@ class Template:
         )
         if rsp.status_code == http.client.OK:
             self.dbinfo = DBInfo(rsp.json())
+            self.db_uri = str(self.dbinfo)
             return self
         elif rsp.status_code == http.client.LOCKED:
             return self
